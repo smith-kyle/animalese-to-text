@@ -17,7 +17,7 @@ FRAMES_DIR = PROJECT_DIR / "data" / "frames"
 VIDEOS_DIR = PROJECT_DIR / "data" / "videos"
 
 FRAMES_PER_SECOND = 30
-SKIP_FRAMES = 2
+SKIP_FRAMES = 3
 
 
 def download_videos():
@@ -27,52 +27,10 @@ def download_videos():
         ydl.download(video_links)
 
 
-class Snippet:
-    def __init__(self, start_frame: int, start_im: Image):
-        self.start_frame = start_frame
-        self.start_im = start_im
-        self.is_done = False
-        self.last_text_append: Optional[int] = None
-        self.last_text_append_im: Optional[Image] = None
-        self.text = ""
+class OCR:
+    def __init__(self):
+        pass
 
-    
-    def process_frame(self, im: Image, frame_num: int):
-        frame_text = Snippet.get_text(im)
-        if len(frame_text) > len(self.text):
-            self.last_text_append = frame_num
-            self.last_text_append_im = im
-            self.text = frame_text
-        elif self.is_end(im, frame_text):
-            self.dump()
-            self.is_done = True
-
-
-    def dump(self) -> None:
-        if self.last_text_append is None or self.last_text_append_im is None:
-            raise ValueError("Trying to log without capturing text")
-
-        char = Snippet.get_character(self.start_im)
-        start_timestamp = self.start_frame / FRAMES_PER_SECOND
-        end_timestamp = self.last_text_append / FRAMES_PER_SECOND
-        print(f"{char} {start_timestamp} - {end_timestamp}: {self.text}")
-
-
-    def is_end(self, frame_im: Image, frame_text: str):
-        is_not_dialog = Snippet.get_character(frame_im) is None
-        is_next_dialog = len(frame_text) == 0 and len(self.text) > 0 
-        return is_not_dialog or is_next_dialog
-
-
-    @staticmethod
-    def is_start(im: Image) -> bool:
-        """
-        Checks whether the image is the start of some dialog
-        """
-        has_character = Snippet.get_character(im) is not None
-        has_text = Snippet.get_text(im) != ""
-        return has_character and not has_text
-        
     @staticmethod
     def get_character(im) -> Optional[str]:
         """
@@ -96,6 +54,65 @@ class Snippet:
         return pytesseract.image_to_string(im.crop(box=name_box)).strip()
 
 
+class Snippet:
+    def __init__(self, start_frame: int, start_im: Image):
+        print(f"Started snippet at {start_frame}")
+        self.start_frame = start_frame
+        self.start_im = start_im
+        self.is_done = False
+        self.last_text_append: Optional[int] = None
+        self.last_text_append_im: Optional[Image] = None
+        self.text = ""
+        self.char = OCR.get_character(start_im)
+        self.num_frames_char_missing = 0
+
+    
+    def process_frame(self, im: Image, frame_num: int):
+        frame_text = OCR.get_text(im)
+        char = OCR.get_character(im)
+
+        if char != self.char:
+            self.num_frames_char_missing += 1
+        else:
+            self.num_frames_char_missing = 0
+
+        if len(frame_text) > len(self.text):
+            print(self.text)
+            self.last_text_append = frame_num
+            self.last_text_append_im = im
+            self.text = frame_text
+        elif self.is_end(im, frame_text):
+            self.dump()
+            self.is_done = True
+
+
+    def dump(self) -> None:
+        if self.last_text_append is None or self.last_text_append_im is None:
+            raise ValueError("Trying to log without capturing text")
+
+        start_timestamp = self.start_frame / FRAMES_PER_SECOND
+        end_timestamp = self.last_text_append / FRAMES_PER_SECOND
+        print(f"{self.char} {start_timestamp} - {end_timestamp}: {self.text}")
+
+
+    def is_end(self, frame_im: Image, frame_text: str):
+        if self.num_frames_char_missing > 5:
+            return True
+
+        is_next_dialog = len(frame_text) == 0 and len(self.text) > 0 
+        return is_next_dialog
+
+
+    @staticmethod
+    def is_start(im: Image) -> bool:
+        """
+        Checks whether the image is the start of some dialog
+        """
+        if OCR.get_character(im) is not None:
+            return OCR.get_text(im) == ""
+        return False
+
+
 def process_video(path):
     cap = cv2.VideoCapture(str(path))
     current_frame = 0
@@ -108,11 +125,13 @@ def process_video(path):
 
         im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
+        print(current_frame)
         if Snippet.is_start(im):
             s = Snippet(current_frame, im)
             while not s.is_done:
                 current_frame += 1
                 ret, frame = cap.read()
+                print(current_frame)
                 im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 s.process_frame(im, current_frame)
 
