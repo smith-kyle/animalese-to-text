@@ -1,0 +1,8 @@
+venv
+.git
+__pycache__
+**/frames/*
+**/videos/*
+**/samples/*
+**/triangles/**
+**/no_triangles/**

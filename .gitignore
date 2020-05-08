@@ -1,0 +1,10 @@
+venv
+__pycache__
+**/frames/*
+**/videos/*
+**/triangles/**
+**/no_triangles/**
+data_collection/k8s_templates/transcribe-job.yaml
+data_collection/k8s_templates/prepare-videos.yaml
+data/**
+!data/**.zip

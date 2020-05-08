@@ -1,0 +1,6 @@
+Pillow==7.1.2
+pytesseract==0.3.4
+matplotlib==3.2.1
+youtube-dl==2020.5.3
+opencv-python==4.2.0.34
+pydub==0.24.0
