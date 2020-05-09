@@ -18,7 +18,8 @@ FRAMES_DIR = PROJECT_DIR / "data" / "frames"
 VIDEOS_DIR = PROJECT_DIR / "data" / "videos"
 
 FRAMES_PER_SECOND = 30
-SKIP_FRAMES = 3
+SKIP_FRAMES = 1 
+SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
 
 def download_videos():
@@ -26,7 +27,6 @@ def download_videos():
     ydl_opts = {"format": "bestvideo"}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_links)
-
 
 
 class OCR:
@@ -79,44 +79,42 @@ class Snippet:
         self.last_text_append_im: Optional[Image] = None
         self.text = ""
         self.char = OCR.get_character(start_im)
-        self.num_frames_char_missing = 0
 
     
     def process_frame(self, im: Image, frame_num: int):
         frame_text = OCR.get_text(im)
-        char = OCR.get_character(im)
-
-        if char != self.char:
-            self.num_frames_char_missing += 1
-        else:
-            self.num_frames_char_missing = 0
 
         if len(frame_text) > len(self.text):
             print(self.text)
             self.last_text_append = frame_num
             self.last_text_append_im = im
             self.text = frame_text
-        elif self.is_end(im, frame_text):
-            self.dump()
+
+        if self.is_end(im, frame_text):
+            print(OCR.has_yellow_arrow(im))
+            im.save('./wau.png')
+            self.dump(frame_num)
             self.is_done = True
 
 
-    def dump(self) -> None:
+    def dump(self, frame_num: int) -> None:
         if self.last_text_append is None or self.last_text_append_im is None:
+            print(repr(self.text))
             raise ValueError("Trying to log without capturing text")
 
         start_timestamp = self.start_frame / FRAMES_PER_SECOND
-        end_timestamp = self.last_text_append / FRAMES_PER_SECOND
+        end_timestamp = (frame_num / FRAMES_PER_SECOND) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
         print(f"{self.char} {start_timestamp} - {end_timestamp}: {self.text}")
 
 
     def is_end(self, frame_im: Image, frame_text: str):
-        # TODO: return OCR.has_yellow_arrow(frame_im)
-        if self.num_frames_char_missing > 5:
+        if OCR.has_yellow_arrow(frame_im) and len(frame_text) > 0:
             return True
-
-        is_next_dialog = len(frame_text) == 0 and len(self.text) > 0 
-        return is_next_dialog
+        
+        if len(self.text) > 0 and len(frame_text) == 0:
+            return True
+        
+        return False
 
 
     @staticmethod
@@ -124,13 +122,17 @@ class Snippet:
         """
         Checks whether the image is the start of some dialog
         """
-        if OCR.get_character(im) is not None:
-            return OCR.get_text(im) == ""
+        maybe_char = OCR.get_character(im)
+        if maybe_char is not None:
+            text = OCR.get_text(im)
+            return text == ""
         return False
 
 
-def process_video(path):
+def process_video(path, n = 0):
     cap = cv2.VideoCapture(str(path))
+    total_frames = cap.get(7)
+    cap.set(1, n)
     current_frame = 0
 
     while True:
