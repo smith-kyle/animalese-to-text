@@ -1,3 +1,4 @@
+import math
 import pathlib
 from pathlib import Path
 from typing import Optional
@@ -9,7 +10,7 @@ from matplotlib import cm
 import numpy as np
 import youtube_dl
 
-from characters import characters
+from .characters import characters
 
 
 PROJECT_DIR = Path(__file__).parent.parent
@@ -27,9 +28,23 @@ def download_videos():
         ydl.download(video_links)
 
 
+
 class OCR:
     def __init__(self):
         pass
+
+    @staticmethod
+    def has_yellow_arrow(im) -> bool:
+        samples_pos = [(962, 997), (962, 990)]
+        YELLOW_THRESHOLD = 80
+        def distance(c1):
+            (r1,g1,b1) = c1
+            (r2, g2, b2) = (184, 138, 10)
+            return math.sqrt((r1 - r2)**2 + (g1 - g2) ** 2 + (b1 - b2) **2)
+
+        rgbs = [im.convert('RGB').getpixel(pos) for pos in samples_pos]
+        ds = [distance(rgb) for rgb in rgbs]
+        return any(d < YELLOW_THRESHOLD for d in ds)
 
     @staticmethod
     def get_character(im) -> Optional[str]:
@@ -96,6 +111,7 @@ class Snippet:
 
 
     def is_end(self, frame_im: Image, frame_text: str):
+        # TODO: return OCR.has_yellow_arrow(frame_im)
         if self.num_frames_char_missing > 5:
             return True
 
@@ -136,4 +152,12 @@ def process_video(path):
                 s.process_frame(im, current_frame)
 
 
-process_video(VIDEOS_DIR / "1.mp4")
+def get_nth_frame(path, n):
+    cap = cv2.VideoCapture(str(path))
+    total_frames = cap.get(7)
+    cap.set(1, n)
+    ret, frame = cap.read()
+    return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+
+# process_video(VIDEOS_DIR / "1.mp4")
