@@ -73,12 +73,11 @@ class OCR:
         for name_box in name_boxes:
             for thresh in [100, 200]:
                 cropped = OCR.to_bw(im.crop(box=name_box), thresh).rotate(-8)
-                cropped.save("./tmp.png")
                 text = pytesseract.image_to_string(cropped).strip()
                 # cropped.save("-".join([str(n) for n in name_box]) + ".png")
-                for c in characters:
-                    if c in text:
-                        return c
+                matching_chars = [c for c in characters if c in text]
+                if matching_chars:
+                    return sorted(matching_chars, key=len)[-1]
 
         return None
     
