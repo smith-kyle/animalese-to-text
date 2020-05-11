@@ -45,18 +45,18 @@ class TranscriptionTestMethods(unittest.TestCase):
             assert s.char == "Gulliver"
             i += 1
 
-    # def test_gulliver2(self):
-    #     gulliver2_path = TEST_DIR / "samples" / "gulliver2.mp4"
-    #     snippet_text = [
-    #         "Mrmph",
-    #         "already tipped",
-    #         "Who are you"
-    #     ]
-    #     i = 0
-    #     for s in transcribe.process_video(gulliver2_path):
-    #         assert snippet_text[i] in s.text
-    #         assert s.char == "Gulliver"
-    #         i += 1
+    def test_gulliver2(self):
+        gulliver2_path = TEST_DIR / "samples" / "gulliver2.mp4"
+        snippet_text = [
+            "Mrmph",
+            "already tipped",
+            "Who are you"
+        ]
+        i = 0
+        for s in transcribe.process_video(gulliver2_path):
+            assert snippet_text[i] in s.text
+            assert s.char == "Gulliver"
+            i += 1
 
 if __name__ == '__main__':
     unittest.main()

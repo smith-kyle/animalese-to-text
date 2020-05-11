@@ -86,7 +86,7 @@ class OCR:
         Crops an image to where the dialog appears and converts to string
         """
         text_box = (380, 720, 1541, 967)
-        return pytesseract.image_to_string(im.crop(box=text_box)).strip()
+        return pytesseract.image_to_string(OCR.to_bw(im.crop(box=text_box))).strip()
 
 
 class Snippet:
@@ -170,7 +170,7 @@ def process_video(path, n = 0):
             continue
 
         im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        # im.save(f"{current_frame}.png")
+        im.save(f"{current_frame}.png")
         print(current_frame)
 
         if Snippet.is_start(im):
