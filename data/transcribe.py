@@ -28,7 +28,8 @@ TOTAL_SECONDS = HOUR * 60 * 60 + MINUTE * 60 + SECOND
 START_FRAME = TOTAL_SECONDS * FRAMES_PER_SECOND
 
 def download_videos():
-    video_links = ["https://www.youtube.com/watch?v=_FPUjb63ghk"]
+    video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]
+    # video_links = ["https://www.youtube.com/watch?v=_FPUjb63ghk"]
     ydl_opts = {"format": "bestvideo"}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_links)
@@ -53,8 +54,7 @@ class OCR:
 
 
     @staticmethod
-    def to_bw(im: Image) -> Image:
-        thresh = 200
+    def to_bw(im: Image, thresh: int) -> Image:
         fn = lambda x : 255 if x > thresh else 0
         return im.convert('L').point(fn, mode='1')
 
@@ -71,12 +71,14 @@ class OCR:
         ]
 
         for name_box in name_boxes:
-            cropped = OCR.to_bw(im.crop(box=name_box)).rotate(-8)
-            text = pytesseract.image_to_string(cropped).strip()
-            # cropped.save("-".join([str(n) for n in name_box]) + ".png")
-            for c in characters:
-                if c in text:
-                    return c
+            for thresh in [100, 200]:
+                cropped = OCR.to_bw(im.crop(box=name_box), thresh).rotate(-8)
+                cropped.save("./tmp.png")
+                text = pytesseract.image_to_string(cropped).strip()
+                # cropped.save("-".join([str(n) for n in name_box]) + ".png")
+                for c in characters:
+                    if c in text:
+                        return c
 
         return None
     
@@ -86,7 +88,7 @@ class OCR:
         Crops an image to where the dialog appears and converts to string
         """
         text_box = (380, 720, 1541, 967)
-        return pytesseract.image_to_string(OCR.to_bw(im.crop(box=text_box))).strip()
+        return pytesseract.image_to_string(OCR.to_bw(im.crop(box=text_box), 200)).strip()
 
 
 class Snippet:
@@ -170,7 +172,8 @@ def process_video(path, n = 0):
             continue
 
         im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        im.save(f"{current_frame}.png")
+
+        # im.save(f"{current_frame}.png")
         print(current_frame)
 
         if Snippet.is_start(im):
@@ -179,6 +182,10 @@ def process_video(path, n = 0):
                 current_frame += 1
                 print(current_frame)
                 ret, frame = cap.read()
+
+                if frame is None:
+                    break
+
                 im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 s.process_frame(im, current_frame)
                 if s.is_done:
@@ -197,4 +204,5 @@ def get_nth_frame(path, n):
 # ns = [TOTAL_FRAMES + n for n in range(FRAMES_TO_GET)]
 # for n in ns:
 #     get_nth_frame(VIDEOS_DIR / "1.mp4", n).save(f"{n}.png")
-process_video(VIDEOS_DIR / "1.mp4", START_FRAME)
+# process_video(VIDEOS_DIR / "1.mp4", START_FRAME)
+# download_videos()

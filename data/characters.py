@@ -239,7 +239,7 @@ characters = [
     "Tasha",
     "Tiffany",
     "Timbra",
-    "Timmy ",
+    "Timmy",
     "Tipper",
     "Tom Nook",
     "Tommy",

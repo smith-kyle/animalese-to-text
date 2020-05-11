@@ -38,6 +38,13 @@ class ImageTestMethods(unittest.TestCase):
         assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers2.png")) == "Blathers"
         assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers3.png")) == "Blathers"
         assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers4.png")) == "Blathers"
+
+    def test_name_timmy(self):
+        NAMES_DIR  = TEST_DIR / "names"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "timmy1.png")) == "Timmy"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "timmy2.png")) == "Timmy"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "timmy3.png")) == "Timmy"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "timmy4.png")) == "Timmy"
     
 if __name__ == '__main__':
     unittest.main()
