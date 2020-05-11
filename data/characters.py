@@ -33,6 +33,7 @@ characters = [
     "Billy",
     "Blaire",
     "Blanche",
+    "Blathers",
     "Bluebear",
     "Bob",
     "Bonbon",

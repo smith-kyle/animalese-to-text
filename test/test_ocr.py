@@ -22,6 +22,22 @@ class ImageTestMethods(unittest.TestCase):
 
         for nt in no_triangles:
             assert not transcribe.OCR.has_yellow_arrow(Image.open(nt))
+    
 
+    def test_name_cherry(self):
+        NAMES_DIR  = TEST_DIR / "names"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "cherry1.png")) == "Cherry"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "cherry2.png")) == "Cherry"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "cherry3.png")) == "Cherry"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "cherry4.png")) == "Cherry"
+
+
+    def test_name_blathers(self):
+        NAMES_DIR  = TEST_DIR / "names"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers1.png")) == "Blathers"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers2.png")) == "Blathers"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers3.png")) == "Blathers"
+        assert transcribe.OCR.get_character(Image.open(NAMES_DIR / "blathers4.png")) == "Blathers"
+    
 if __name__ == '__main__':
     unittest.main()
