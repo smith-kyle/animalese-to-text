@@ -165,5 +165,37 @@ class TranscriptionTestMethods(unittest.TestCase):
         ]
         test_video(video_path, snippet_text, "Marcie")
 
+    def test_wilbur1(self):
+        video_path = TEST_DIR / "samples" / "wilbur1.mp4"
+        snippet_text = [
+            "Bellbottom rock"
+        ]
+        test_video(video_path, snippet_text, "Wilbur")
+
+    def test_sprocket1(self):
+        video_path = TEST_DIR / "samples" / "sprocket1.mp4"
+        snippet_text = [
+            "You been training",
+            "up a big sweat",
+        ]
+        test_video(video_path, snippet_text, "Sprocket")
+
+    def test_flick1(self):
+        video_path = TEST_DIR / "samples" / "flick1.mp4"
+        snippet_text = [
+            "Do you live here",
+            "bug buff",
+        ]
+        test_video(video_path, snippet_text, "Sprocket")
+
+    def test_monique1(self):
+        video_path = TEST_DIR / "samples" / "monique1.mp4"
+        snippet_text = [
+            "who might you",
+            "you live on this",
+            "done unpacking"
+        ]
+        test_video(video_path, snippet_text, "Monique")
+
 if __name__ == '__main__':
     unittest.main()
