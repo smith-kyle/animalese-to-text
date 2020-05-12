@@ -21,11 +21,6 @@ FRAMES_PER_SECOND = 30
 SKIP_FRAMES = 1
 SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
-HOUR = 0
-MINUTE = 7
-SECOND = 2
-TOTAL_SECONDS = HOUR * 60 * 60 + MINUTE * 60 + SECOND
-START_FRAME = TOTAL_SECONDS * FRAMES_PER_SECOND
 
 def download_videos():
     video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]
@@ -87,7 +82,8 @@ class OCR:
         Crops an image to where the dialog appears and converts to string
         """
         text_box = (380, 720, 1541, 967)
-        return pytesseract.image_to_string(OCR.to_bw(im.crop(box=text_box), 200)).strip()
+        im = OCR.to_bw(im.crop(box=text_box), 200)
+        return pytesseract.image_to_string(im).strip()
 
 
 class Snippet:
@@ -126,8 +122,8 @@ class Snippet:
         if self.last_text_append is None or self.last_text_append_im is None:
             raise ValueError("Trying to log without capturing text")
 
-        start_timestamp = (self.start_frame + START_FRAME) / FRAMES_PER_SECOND
-        end_timestamp = ((frame_num + START_FRAME) / FRAMES_PER_SECOND) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
+        start_timestamp = (self.start_frame) / FRAMES_PER_SECOND
+        end_timestamp = ((frame_num) / FRAMES_PER_SECOND) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
         print(f"{self.char} {start_timestamp} - {end_timestamp}: {self.text}")
 
 
@@ -136,7 +132,7 @@ class Snippet:
             print("Ended because yellow arrow and has text")
             return True
         
-        if len(self.text) > 0 and self.frames_without_text > 5:
+        if len(self.text) > 3 and self.frames_without_text > 5:
             print("Ended because had text but no text found now")
             return True
         
@@ -197,11 +193,3 @@ def get_nth_frame(path, n):
     cap.set(1, n)
     ret, frame = cap.read()
     return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-
-# FRAMES_TO_GET = 20
-# ns = [TOTAL_FRAMES + n for n in range(FRAMES_TO_GET)]
-# for n in ns:
-#     get_nth_frame(VIDEOS_DIR / "1.mp4", n).save(f"{n}.png")
-# process_video(VIDEOS_DIR / "1.mp4", START_FRAME)
-# download_videos()

@@ -9,7 +9,6 @@ def test_video(path, texts, char):
     i = 0
     for s in transcribe.process_video(path):
         assert texts[i] in s.text
-        print(s.char)
         assert s.char == char
         i += 1
 
@@ -124,7 +123,47 @@ class TranscriptionTestMethods(unittest.TestCase):
             "communicator parts"
         ]
         test_video(video_path, snippet_text, "Gulliver")
+
+    def test_isabelle1(self):
+        video_path = TEST_DIR / "samples" / "isabelle1.mp4"
+        snippet_text = [
+            "Good afternoon",
+            "Of course"
+        ]
+        test_video(video_path, snippet_text, "Isabelle")
     
+    
+    def test_wendy1(self):
+        video_path = TEST_DIR / "samples" / "wendy1.mp4"
+        snippet_text = [
+            "SUCH good taste",
+            "WELL"
+        ]
+        test_video(video_path, snippet_text, "Wendy")
+
+    def test_zucker1(self):
+        video_path = TEST_DIR / "samples" / "zucker1.mp4"
+        snippet_text = [
+            "Didja make"
+        ]
+        test_video(video_path, snippet_text, "Zucker")
+
+    def test_spike1(self):
+        video_path = TEST_DIR / "samples" / "spike1.mp4"
+        snippet_text = [
+            "on this here",
+            "They all said",
+            "deal with a"
+        ]
+        test_video(video_path, snippet_text, "Spike")
+
+    def test_marcie1(self):
+        video_path = TEST_DIR / "samples" / "marcie1.mp4"
+        snippet_text = [
+            "happy to see you",
+            "minute dinner"
+        ]
+        test_video(video_path, snippet_text, "Marcie")
 
 if __name__ == '__main__':
     unittest.main()
