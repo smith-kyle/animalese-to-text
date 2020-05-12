@@ -23,9 +23,9 @@ SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
 
 def download_videos():
-    video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]
-    # video_links = ["https://www.youtube.com/watch?v=_FPUjb63ghk"]
-    ydl_opts = {"format": "bestvideo"}
+    # video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]
+    video_links = ["https://www.youtube.com/watch?v=_FPUjb63ghk"]
+    ydl_opts = {"format": "bestaudio"}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_links)
 
@@ -83,7 +83,7 @@ class OCR:
         """
         text_box = (380, 720, 1541, 967)
         im = OCR.to_bw(im.crop(box=text_box), 200)
-        return pytesseract.image_to_string(im).strip()
+        return pytesseract.image_to_string(im).strip().replace("|", "I")
 
 
 class Snippet:
@@ -114,16 +114,15 @@ class Snippet:
             self.text = frame_text
 
         if self.is_end(im, frame_text):
-            self.dump(frame_num)
             self.is_done = True
 
 
-    def dump(self, frame_num: int) -> None:
+    def dump(self, frame_num: int, fps) -> None:
         if self.last_text_append is None or self.last_text_append_im is None:
             raise ValueError("Trying to log without capturing text")
 
-        start_timestamp = (self.start_frame) / FRAMES_PER_SECOND
-        end_timestamp = ((frame_num) / FRAMES_PER_SECOND) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
+        start_timestamp = (self.start_frame) / fps
+        end_timestamp = ((frame_num) / fps) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
         print(f"{self.char} {start_timestamp} - {end_timestamp}: {self.text}")
 
 
@@ -153,6 +152,7 @@ class Snippet:
 
 def process_video(path, n = 0):
     cap = cv2.VideoCapture(str(path))
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
     total_frames = cap.get(7)
     cap.set(1, n)
     current_frame = 0
@@ -184,6 +184,7 @@ def process_video(path, n = 0):
                 im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 s.process_frame(im, current_frame)
                 if s.is_done:
+                    s.dump(current_frame, fps)
                     yield s
 
 
@@ -193,3 +194,5 @@ def get_nth_frame(path, n):
     cap.set(1, n)
     ret, frame = cap.read()
     return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+download_videos()
