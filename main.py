@@ -38,15 +38,15 @@ if __name__ == "__main__":
     video_num = video_src.split("/")[-1].split(".mp4")[0]
 
     snippet_num = 0
-    for s in process_video(VIDEO_DEST, 360):
+    for s in process_video(VIDEO_DEST):
         snippet_num += 1
         prefix = f"{video_num}.{snippet_num}"
         text_snippet_path = OUTPUT_DIR / f"{prefix}.txt"
         with open(text_snippet_path, "w") as f:
             f.write(f"{s.char}\n{s.text}")
         
-        start_ms = int(s.start_frame / s.fps) * 1000
-        end_ms = int(s.end_frame / s.fps) * 1000
+        start_ms = int((s.start_frame / s.fps) * 1000)
+        end_ms = int((s.end_frame / s.fps) * 1000)
 
         audio_snippet_path = OUTPUT_DIR / f"{prefix}.mp3"
         audio[start_ms:end_ms].export(audio_snippet_path, format="mp3")

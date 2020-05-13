@@ -116,7 +116,7 @@ class Snippet:
             self.text = frame_text
 
         if self.is_end(im, frame_text):
-            self.end_frame = frame_num
+            self.end_frame = frame_num + int(SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS * self.fps)
             self.is_done = True
 
 

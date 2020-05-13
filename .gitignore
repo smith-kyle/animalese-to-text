@@ -4,3 +4,4 @@ __pycache__
 **/videos/*
 **/triangles/**
 **/no_triangles/**
+data/k8s_templates/transcribe-job.yaml
