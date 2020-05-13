@@ -14,21 +14,14 @@ AUDIO_DEST = WORK_DIR / "audio.mp3"
 OUTPUT_DIR = WORK_DIR / "result"
 
 
-def download_from_storage(src, dest):
+def gsutil_cp(src, dest):
     cmd = f"gsutil cp {src} {dest}"
-    print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     if error:
         raise ValueError(error)
-
-
-def upload_to_storage(src, dest):
-    cmd = f"gsutil cp -r {src} {dest}"
-    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-    output, error = process.communicate()
-    if error:
-        raise ValueError(error)
+    else:
+        print(output)
 
 
 if __name__ == "__main__":
@@ -38,24 +31,29 @@ if __name__ == "__main__":
     audio_src = sys.argv[2]
     output_url = sys.argv[3]
 
-    download_from_storage(video_src, VIDEO_DEST)
-    download_from_storage(audio_src, AUDIO_DEST)
+    gsutil_cp(video_src, VIDEO_DEST)
+    gsutil_cp(audio_src, AUDIO_DEST)
     audio = AudioSegment.from_mp3(AUDIO_DEST)
 
     video_num = video_src.split("/")[-1].split(".mp4")[0]
 
     snippet_num = 0
-    for s in process_video(VIDEO_DEST):
+    for s in process_video(VIDEO_DEST, 360):
         snippet_num += 1
         prefix = f"{video_num}.{snippet_num}"
-        with open(OUTPUT_DIR / f"{prefix}.txt", "w") as f:
+        text_snippet_path = OUTPUT_DIR / f"{prefix}.txt"
+        with open(text_snippet_path, "w") as f:
             f.write(f"{s.char}\n{s.text}")
         
         start_ms = int(s.start_frame / s.fps) * 1000
         end_ms = int(s.end_frame / s.fps) * 1000
-        audio[start_ms:end_ms].export(OUTPUT_DIR / f"{prefix}.mp3", format="mp3")
+
+        audio_snippet_path = OUTPUT_DIR / f"{prefix}.mp3"
+        audio[start_ms:end_ms].export(audio_snippet_path, format="mp3")
+        gsutil_cp(audio_snippet_path, output_url)
+        gsutil_cp(text_snippet_path, output_url)
+
     print("Finished transcribing!")
-    upload_to_storage(OUTPUT_DIR / "*", output_url)
 
 
         
