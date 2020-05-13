@@ -197,5 +197,3 @@ def get_nth_frame(path, n):
     cap.set(1, n)
     ret, frame = cap.read()
     return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-download_videos()

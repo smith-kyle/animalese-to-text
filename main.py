@@ -2,6 +2,7 @@ from pathlib import Path
 from pydub import AudioSegment
 import os
 import sys
+import subprocess
 
 from data.transcribe import process_video
 
@@ -14,6 +15,7 @@ OUTPUT_DIR = WORK_DIR / "result"
 
 def download_from_storage(src, dest):
     cmd = f"gsutil cp {src} {dest}"
+    print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     if error:
@@ -28,7 +30,8 @@ def upload_to_storage(src, dest):
 
 
 if __name__ == "__main__":
-    os.mkdir(OUTPUT_DIR)
+    if not OUTPUT_DIR.is_dir():
+        os.mkdir(OUTPUT_DIR)
     video_src = sys.argv[1]
     audio_src = sys.argv[2]
     output_url = sys.argv[3]
@@ -43,14 +46,17 @@ if __name__ == "__main__":
     for s in process_video(VIDEO_DEST):
         snippet_num += 1
         prefix = f"{video_num}.{snippet_num}"
-        with open(OUTPUT_DIR / f"{prefix}.txt") as f:
+        with open(OUTPUT_DIR / f"{prefix}.txt", "w") as f:
             f.write(f"{s.char}\n{s.text}")
         
         start_ms = int(s.start_frame / s.fps) * 1000
         end_ms = int(s.end_frame / s.fps) * 1000
         audio[start_ms:end_ms].export(OUTPUT_DIR / f"{prefix}.mp3", format="mp3")
+        if snippet_num == 1: # TEMP REMOVE
+            break
+
     
-    upload_to_storage(OUTPUT_DIR, output_url)
+    upload_to_storage(OUTPUT_DIR / "*", output_url)
 
 
         
