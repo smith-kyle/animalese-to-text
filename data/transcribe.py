@@ -87,7 +87,7 @@ class OCR:
 
 
 class Snippet:
-    def __init__(self, start_frame: int, start_im: Image):
+    def __init__(self, start_frame: int, start_im: Image, fps: int):
         print(f"Started snippet at {start_frame}")
         self.start_frame = start_frame
         self.start_im = start_im
@@ -97,6 +97,8 @@ class Snippet:
         self.text = ""
         self.char = OCR.get_character(start_im)
         self.frames_without_text = 0
+        self.end_frame: Optional[int] = None
+        self.fps = fps
 
     
     def process_frame(self, im: Image, frame_num: int):
@@ -114,15 +116,16 @@ class Snippet:
             self.text = frame_text
 
         if self.is_end(im, frame_text):
+            self.end_frame = frame_num
             self.is_done = True
 
 
-    def dump(self, frame_num: int, fps) -> None:
+    def dump(self, frame_num: int) -> None:
         if self.last_text_append is None or self.last_text_append_im is None:
             raise ValueError("Trying to log without capturing text")
 
-        start_timestamp = (self.start_frame) / fps
-        end_timestamp = ((frame_num) / fps) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
+        start_timestamp = (self.start_frame) / self.fps
+        end_timestamp = ((frame_num) / self.fps) + SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS
         print(f"{self.char} {start_timestamp} - {end_timestamp}: {self.text}")
 
 
@@ -172,7 +175,7 @@ def process_video(path, n = 0):
         print(current_frame)
 
         if Snippet.is_start(im):
-            s = Snippet(current_frame, im)
+            s = Snippet(current_frame, im, fps)
             while not s.is_done:
                 current_frame += 1
                 print(current_frame)
@@ -184,7 +187,7 @@ def process_video(path, n = 0):
                 im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 s.process_frame(im, current_frame)
                 if s.is_done:
-                    s.dump(current_frame, fps)
+                    s.dump(current_frame)
                     yield s
 
 
