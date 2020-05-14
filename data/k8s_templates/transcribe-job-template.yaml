@@ -11,10 +11,10 @@ spec:
         command: ["python", "main.py", VIDEO_PATH, AUDIO_PATH, DEST]
         resources:
           requests:
-            memory: "2Gi"
+            memory: "1.5Gi"
             cpu: "2"
           limits:
-            memory: "2Gi"
+            memory: "1.5Gi"
             cpu: "2"
       restartPolicy: Never
   backoffLimit: 4
