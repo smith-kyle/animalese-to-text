@@ -37,7 +37,7 @@ def replace(file_path, name_and_values):
     
 def k8s_apply(path):
     cmd = f"kubectl apply -f {path}"
-    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, universal_newlines=True)
     output, error = process.communicate()
     if error:
         raise ValueError(error)
@@ -49,14 +49,14 @@ if __name__ == "__main__":
     video_source = sys.argv[1]
     dest = sys.argv[2]
 
-    paths = gsutil_ls(video_source)
-    for i, video_path in enumerate(paths):
+    to_include = [str(x) for x in range(31, 50)]
+    paths = [x for x in gsutil_ls(video_source) if any(num in x for num in to_include)]
+    for video_path in paths:
         shutil.copyfile(JOB_TEMPLATE, JOB_PATH)
-        job_name = f"transcribe-job-{i}"
+        print(video_path)
+        num = video_path.split('.mp4')[0].split("/")[-1]
+        job_name = f"transcribe-job-{num}"
         audio_path = f"{video_path.split('.mp4')[0]}.mp3"
         names_and_values = [("JOB_NAME", job_name), ("AUDIO_PATH", audio_path), ("VIDEO_PATH", video_path), ("DEST", dest)]
         replace(JOB_PATH, names_and_values)
-        if i > 25:
-            k8s_apply(JOB_PATH)
-        if i == 50:
-            break
+        k8s_apply(JOB_PATH)

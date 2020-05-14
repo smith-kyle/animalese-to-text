@@ -18,7 +18,7 @@ FRAMES_DIR = PROJECT_DIR / "data" / "frames"
 VIDEOS_DIR = PROJECT_DIR / "data" / "videos"
 
 FRAMES_PER_SECOND = 30
-SKIP_FRAMES = 1
+SKIP_FRAMES = 2 
 SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
 
@@ -178,12 +178,15 @@ def process_video(path, n = 0):
             s = Snippet(current_frame, im, fps)
             while not s.is_done:
                 current_frame += 1
-                print(current_frame)
                 ret, frame = cap.read()
 
                 if frame is None:
                     break
+            
+                if current_frame % SKIP_FRAMES != 0:
+                  continue
 
+                print(current_frame)
                 im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 s.process_frame(im, current_frame)
                 if s.is_done:

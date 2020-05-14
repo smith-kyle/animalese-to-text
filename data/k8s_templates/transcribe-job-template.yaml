@@ -9,5 +9,12 @@ spec:
       - name: transcribe
         image: us.gcr.io/primordial-gate-277004/animalese:latest
         command: ["python", "main.py", VIDEO_PATH, AUDIO_PATH, DEST]
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "2"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
       restartPolicy: Never
   backoffLimit: 4

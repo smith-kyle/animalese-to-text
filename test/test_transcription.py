@@ -186,7 +186,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "Do you live here",
             "bug buff",
         ]
-        test_video(video_path, snippet_text, "Sprocket")
+        test_video(video_path, snippet_text, "Flick")
 
     def test_monique1(self):
         video_path = TEST_DIR / "samples" / "monique1.mp4"
