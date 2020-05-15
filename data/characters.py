@@ -5,7 +5,6 @@ characters = [
     "Agnes",
     "Ai",
     "Aisle",
-    "Al",
     "Alfonso",
     "Alice",
     "Alli",
