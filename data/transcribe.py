@@ -53,6 +53,23 @@ class OCR:
         fn = lambda x : 255 if x > thresh else 0
         return im.convert('L').point(fn, mode='1')
 
+    
+    @staticmethod
+    def combine_images(images: List[Image.Image]) -> Image:
+        widths, heights = zip(*(i.size for i in images))
+
+        max_width = max(widths)
+        total_height = sum(heights)
+
+        new_im = Image.new('RGB', (max_width, total_height))
+
+        y_offset = 0
+        for im in images:
+            new_im.paste(im, (0, y_offset))
+            y_offset += im.size[1]
+
+        return new_im
+
     @staticmethod
     def get_character(im) -> Optional[str]:
         """
