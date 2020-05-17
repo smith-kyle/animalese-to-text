@@ -1,7 +1,7 @@
 import math
 import pathlib
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import cv2
 from PIL import Image
@@ -79,17 +79,19 @@ class OCR:
         name_boxes = [
             (360, 614, 655, 695), 
             (395, 635, 585, 686),
-            (206, 500, 1000, 800),
         ]
 
+        images = []
         for name_box in name_boxes:
             for thresh in [100, 200]:
-                cropped = OCR.to_bw(im.crop(box=name_box), thresh).rotate(-8)
-                text = pytesseract.image_to_string(cropped).strip()
-                # cropped.save("-".join([str(n) for n in name_box]) + ".png")
-                matching_chars = [c for c in characters if c in text]
-                if matching_chars:
-                    return sorted(matching_chars, key=len)[-1]
+                images.append(OCR.to_bw(im.crop(box=name_box), thresh).rotate(-8))
+
+        image = OCR.combine_images(images)
+        text = pytesseract.image_to_string(image).strip()
+        # cropped.save("-".join([str(n) for n in name_box]) + ".png")
+        char = "Blathers"
+        if char in text:
+            return char
 
         return None
     
