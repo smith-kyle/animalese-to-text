@@ -71,7 +71,8 @@ def run_cmd(cmd):
 
 
 def download_video(url, output_path):
-    run_cmd(f"youtube-dl -f best -o {output_path} {url}")
+    best_video_and_audio = "137+140"
+    run_cmd(f"youtube-dl -f {best_video_and_audio} -o {output_path} {url}")
 
 
 def strip_audio(video_path, audio_path):
