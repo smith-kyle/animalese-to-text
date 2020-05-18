@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: transcribe
-        image: us.gcr.io/primordial-gate-277004/animalese:latest
+        image: us.gcr.io/primordial-gate-277004/animalese:blathers
         command: ["python", "main.py", VIDEO_PATH, AUDIO_PATH, DEST]
         resources:
           requests:

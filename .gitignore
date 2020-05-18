@@ -5,3 +5,4 @@ __pycache__
 **/triangles/**
 **/no_triangles/**
 data/k8s_templates/transcribe-job.yaml
+data/k8s_templates/prepare-videos.yaml

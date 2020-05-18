@@ -60,7 +60,8 @@ def get_video_length(filename):
     return float(result.stdout)
 
 def run_cmd(cmd):
-    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+    print(cmd)
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, universal_newlines=True)
     output, error = process.communicate()
     if error:
         raise ValueError(error)

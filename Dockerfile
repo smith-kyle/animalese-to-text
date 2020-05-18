@@ -22,5 +22,6 @@ RUN apt-get install -y \
 COPY main.py main.py
 COPY data/transcribe.py data/transcribe.py
 COPY data/characters.py data/characters.py
+COPY data/preprocessing.py data/preprocessing.py
 
 CMD python /main.py
