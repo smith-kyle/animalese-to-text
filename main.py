@@ -35,12 +35,13 @@ if __name__ == "__main__":
     gsutil_cp(audio_src, AUDIO_DEST)
     audio = AudioSegment.from_mp3(AUDIO_DEST)
 
-    video_num = video_src.split("/")[-1].split(".mp4")[0]
+    big_video = video_src.split("/")[-2]
+    small_video = video_src.split("/")[-1].split(".mp4")[0]
 
     snippet_num = 0
     for s in process_video(VIDEO_DEST):
         snippet_num += 1
-        prefix = f"{video_num}.{snippet_num}"
+        prefix = f"{big_video}.{small_video}.{snippet_num}"
         text_snippet_path = OUTPUT_DIR / f"{prefix}.txt"
         with open(text_snippet_path, "w") as f:
             f.write(f"{s.char}\n{s.text}")
