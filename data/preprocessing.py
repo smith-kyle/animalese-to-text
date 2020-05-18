@@ -7,10 +7,6 @@ import subprocess
 import cv2
 from pydub import AudioSegment
 
-VIDEOS_DIR = Path(__file__).parent / "videos"
-
-
-bashCommand = "cwm --rdf test.rdf --ntriples > test.nt"
 
 def ms_to_hmsms(ms):
     seconds=int((ms / 1000) % 60)
@@ -38,12 +34,7 @@ def split_video(input_path, output_path, start_ms, duration_ms):
         raise ValueError(error)
 
 
-def split_video_and_audio(video_num: str, chunk_len: int):
-    video_path = VIDEOS_DIR / f"{video_num}.mp4"
-    audio_path = VIDEOS_DIR / f"{video_num}.mp3"
-    output_dir = VIDEOS_DIR / f"split-{video_num}"
-
-    os.mkdir(output_dir)
+def split_video_and_audio(video_path: Path, audio_path: Path, output_dir: Path, chunk_len: int):
     audio = AudioSegment.from_mp3(audio_path)
 
     chunk_len_ms = chunk_len * 1000
@@ -59,8 +50,35 @@ def split_video_and_audio(video_num: str, chunk_len: int):
         split_video(video_path, video_output_path, start_ms, chunk_len_ms)
 
 
+def run_cmd(cmd):
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, universal_newlines=True)
+    output, error = process.communicate()
+    if error:
+        raise ValueError(error)
+    else:
+        print(output)
+
+
+def download_video(url, output_path):
+    run_cmd(f"youtube-dl -f best -o {output_path} {url}")
+
+
+def strip_audio(video_path, audio_path):
+    run_cmd(f"ffmpeg -i {video_path} -q:a 0 -map a {audio_path}")
+
 
 if __name__ == "__main__":
-    video_num = sys.argv[1]
-    segment_length = sys.argv[2]
-    split_video_and_audio(video_num, int(segment_length))
+    video_url = sys.argv[1]
+    work_dir = Path(sys.argv[2])
+    segment_length = sys.argv[3]
+    video_path = work_dir / "video.mp4"
+    audio_path = work_dir / "audio.mp3"
+
+    output_dir = work_dir / "output"
+    if not output_dir.is_dir:
+        os.mkdir(output_dir)
+
+    download_video(video_url, video_path)
+    strip_audio(video_path, audio_path)
+
+    split_video_and_audio(video_path, audio_path, output_dir, int(segment_length))
