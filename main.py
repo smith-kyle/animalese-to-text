@@ -46,8 +46,9 @@ if __name__ == "__main__":
         with open(text_snippet_path, "w") as f:
             f.write(f"{s.char}\n{s.text}")
         
-        start_ms = int((s.start_frame / s.fps) * 1000)
-        end_ms = int((s.end_frame / s.fps) * 1000)
+        fps = 30
+        start_ms = int((s.start_frame / fps) * 1000)
+        end_ms = int((s.end_frame / fps) * 1000)
 
         audio_snippet_path = OUTPUT_DIR / f"{prefix}.mp3"
         audio[start_ms:end_ms].export(audio_snippet_path, format="mp3")
