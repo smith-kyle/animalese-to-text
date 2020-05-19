@@ -9,5 +9,12 @@ spec:
       - name: preprocess-video
         image: us.gcr.io/primordial-gate-277004/animalese:latest
         command: ["python", "data/preprocessing.py", VIDEO_URL, SEGMENT_LENGTH, DEST]
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
       restartPolicy: Never
   backoffLimit: 4

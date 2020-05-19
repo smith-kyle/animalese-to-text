@@ -47,15 +47,15 @@ def k8s_apply(path):
 
 if __name__ == "__main__":
     video_source = sys.argv[1]
+    big_video = video_source.split("/")[-1]
     dest = sys.argv[2]
 
-    to_include = [str(x) for x in range(31, 50)]
-    paths = [x for x in gsutil_ls(video_source) if any(num in x for num in to_include)]
+    paths = gsutil_ls(video_source)
     for video_path in paths:
         shutil.copyfile(JOB_TEMPLATE, JOB_PATH)
         print(video_path)
         num = video_path.split('.mp4')[0].split("/")[-1]
-        job_name = f"transcribe-job-{num}"
+        job_name = f"blathers-transcribe-job-{big_video}-{num}"
         audio_path = f"{video_path.split('.mp4')[0]}.mp3"
         names_and_values = [("JOB_NAME", job_name), ("AUDIO_PATH", audio_path), ("VIDEO_PATH", video_path), ("DEST", dest)]
         replace(JOB_PATH, names_and_values)
