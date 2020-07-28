@@ -1,10 +1,10 @@
 # Animalese To Text
 
-This project is an attempt to train a speech to text model using Animalese.
+An attempt to train a speech to text model using Animalese.
 
-The dataset in `/data` contains 855 unique audio samples spoken by Blathers.
-These samples were collected from this Youtube playlist: [Animal Crossing: New Horizons (no commentary)](https://www.youtube.com/playlist?list=PLhv3KSMy-FY4SSA_QfRhfw9sdBif09cOk)
-The samples were gathered and transribed using the scripts in `/data_collection`.
+`/data` contains 855 audio samples spoken by Blathers.
+Videos were collected from this Youtube playlist: [Animal Crossing: New Horizons (no commentary)](https://www.youtube.com/playlist?list=PLhv3KSMy-FY4SSA_QfRhfw9sdBif09cOk) 
+then transribed with the scripts in `/data_collection`.
 
 ## Data Format
 
