@@ -11,6 +11,7 @@ import numpy as np
 import youtube_dl
 
 from .characters import characters
+from .characters_dict import CharactersDict
 
 
 PROJECT_DIR = Path(__file__).parent.parent
@@ -21,6 +22,7 @@ FRAMES_PER_SECOND = 30
 SKIP_FRAMES = 2 
 SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
+CHARS_DICT = CharactersDict(str(PROJECT_DIR / "data_collection" / "test" / "chars_dict_data"))
 
 def download_videos():
     # video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]
@@ -76,24 +78,7 @@ class OCR:
         Crops the image to where the character name would appear
         and checks whether the characters match any character names
         """
-        name_boxes = [
-            (360, 614, 655, 695), 
-            (395, 635, 585, 686),
-        ]
-
-        images = []
-        for name_box in name_boxes:
-            for thresh in [100, 200]:
-                images.append(OCR.to_bw(im.crop(box=name_box), thresh).rotate(-8))
-
-        image = OCR.combine_images(images)
-        text = pytesseract.image_to_string(image).strip()
-        # cropped.save("-".join([str(n) for n in name_box]) + ".png")
-        char = "Blathers"
-        if char in text:
-            return char
-
-        return None
+        return CHARS_DICT.get(im)
     
     @staticmethod
     def get_text(im) -> str:
