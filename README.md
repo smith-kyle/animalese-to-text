@@ -25,3 +25,11 @@ To train locally first unzip the file `data/BlathersSpeech-1.2.zip`. Next, gener
 pip install -r requirements.txt
 COMET_API_KEY=XXXXXXXXX python -m train.main
 ```
+
+
+## Data Collection
+
+To download videos and split them for transcription, add video urls to `data_collection/preprocess-videos.py`, provision a GCP cluster, then
+```
+python data_collection/preprocess-videos.py gs://path/to/save/videos
+```

@@ -22,7 +22,7 @@ FRAMES_PER_SECOND = 30
 SKIP_FRAMES = 2 
 SECONDS_OF_AUDIO_AFTER_ARROW_APPEARS = 0.5
 
-CHARS_DICT = CharactersDict(str(PROJECT_DIR / "data_collection" / "test" / "chars_dict_data"))
+CHARS_DICT = CharactersDict()
 
 def download_videos():
     # video_links = ["https://www.youtube.com/watch?v=VG9WGZw6CSg"]

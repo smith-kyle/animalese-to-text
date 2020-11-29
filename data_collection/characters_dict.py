@@ -98,13 +98,15 @@ class CharactersDict(MutableMapping):
     A fuzzy lookup where given an image it is mapped to
     a character, given some ground truth labels
     """
-    def __init__(self, data_dir: str):
+    def __init__(self, data_dir: str=str(FILE_DIR / "dict_seed")):
         """
         data_dir is a directory containing labeled samples of
         characters talking
         """
         self._dict: Dict[imagehash.Image, str] = {}
 
+        # Gets every image in data_dir and sets self._dict[#image_fingerprint]
+        # equal to the character name
         chars = [d for d in listdir(data_dir) if isdir(join(data_dir, d))]
         for char in chars:
             for image_path in listdir(join(data_dir, char)):

@@ -1,7 +1,8 @@
 from pathlib import Path
+import time
 import unittest
 
-from data import transcribe
+from data_collection import transcribe
 
 TEST_DIR = Path(__file__).parent
 
@@ -24,7 +25,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "to MAKE medicine.",
             "whip up some",
         ]
-        test_video(cherry1_path, snippet_text, "Cherry")
+        test_video(cherry1_path, snippet_text, "cherry")
 
     def test_blathers1(self):
         blathers1_path = TEST_DIR / "samples" / "blathers1.mp4"
@@ -32,14 +33,14 @@ class TranscriptionTestMethods(unittest.TestCase):
             "here to help",
             "Marvelous! What would"
         ]
-        test_video(blathers1_path, snippet_text, "Blathers")
+        test_video(blathers1_path, snippet_text, "blathers")
 
     def test_gulliver1(self):
         gulliver1_path = TEST_DIR / "samples" / "gulliver1.mp4"
         snippet_text = [
             "pool noodles"
         ]
-        test_video(gulliver1_path, snippet_text, "Gulliver")
+        test_video(gulliver1_path, snippet_text, "gulliver")
 
     def test_gulliver2(self):
         gulliver2_path = TEST_DIR / "samples" / "gulliver2.mp4"
@@ -48,7 +49,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "already tipped",
             "Who are you"
         ]
-        test_video(gulliver2_path, snippet_text, "Gulliver")
+        test_video(gulliver2_path, snippet_text, "gulliver")
 
     def test_gulliver3(self):
         gulliver3_path = TEST_DIR / "samples" / "gulliver3.mp4"
@@ -57,7 +58,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "if that's the case",
             "had a shovel"
         ]
-        test_video(gulliver3_path, snippet_text, "Gulliver")
+        test_video(gulliver3_path, snippet_text, "gulliver")
 
     def test_timmy1(self):
         timmy1_path = TEST_DIR / "samples" / "timmy1.mp4"
@@ -65,7 +66,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "help you today",
             "Of course"
         ]
-        test_video(timmy1_path, snippet_text, "Timmy")
+        test_video(timmy1_path, snippet_text, "timmy")
 
     def test_curly1(self):
         curly1_path = TEST_DIR / "samples" / "curly1.mp4"
@@ -74,7 +75,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "place gets me",
             "wanna jog"
         ]
-        test_video(curly1_path, snippet_text, "Curly")
+        test_video(curly1_path, snippet_text, "curly")
 
     def test_tom_nook1(self):
         tom_nook1_path = TEST_DIR / "samples" / "tom_nook1.mp4"
@@ -82,7 +83,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "Hello, hello",
             "would you like"
         ]
-        test_video(tom_nook1_path, snippet_text, "Tom Nook")
+        test_video(tom_nook1_path, snippet_text, "tom_nook")
 
     def test_roald1(self):
         video_path = TEST_DIR / "samples" / "roald1.mp4"
@@ -90,7 +91,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "What's up",
             "REALLY gets the"
         ]
-        test_video(video_path, snippet_text, "Roald")
+        test_video(video_path, snippet_text, "roald")
 
     def test_barold1(self):
         video_path = TEST_DIR / "samples" / "barold1.mp4"
@@ -98,7 +99,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "Nice to meet",
             "play yet because"
         ]
-        test_video(video_path, snippet_text, "Barold")
+        test_video(video_path, snippet_text, "barold")
 
     def test_canberra1(self):
         video_path = TEST_DIR / "samples" / "canberra1.mp4"
@@ -106,7 +107,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "nuh uh",
             "for a shop"
         ]
-        test_video(video_path, snippet_text, "Canberra")
+        test_video(video_path, snippet_text, "canberra")
 
     def test_tommy1(self):
         video_path = TEST_DIR / "samples" / "tommy1.mp4"
@@ -115,14 +116,14 @@ class TranscriptionTestMethods(unittest.TestCase):
             "campfire",
             "Resident Services"
         ]
-        test_video(video_path, snippet_text, "Tommy")
+        test_video(video_path, snippet_text, "tommy")
 
     def test_gulliver4(self):
         video_path = TEST_DIR / "samples" / "gulliver4.mp4"
         snippet_text = [
             "communicator parts"
         ]
-        test_video(video_path, snippet_text, "Gulliver")
+        test_video(video_path, snippet_text, "gulliver")
 
     def test_isabelle1(self):
         video_path = TEST_DIR / "samples" / "isabelle1.mp4"
@@ -130,7 +131,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "Good afternoon",
             "Of course"
         ]
-        test_video(video_path, snippet_text, "Isabelle")
+        test_video(video_path, snippet_text, "isabelle")
     
     
     def test_wendy1(self):
@@ -139,14 +140,14 @@ class TranscriptionTestMethods(unittest.TestCase):
             "SUCH good taste",
             "WELL"
         ]
-        test_video(video_path, snippet_text, "Wendy")
+        test_video(video_path, snippet_text, "wendy")
 
     def test_zucker1(self):
         video_path = TEST_DIR / "samples" / "zucker1.mp4"
         snippet_text = [
             "Didja make"
         ]
-        test_video(video_path, snippet_text, "Zucker")
+        test_video(video_path, snippet_text, "zucker")
 
     def test_spike1(self):
         video_path = TEST_DIR / "samples" / "spike1.mp4"
@@ -155,7 +156,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "They all said",
             "deal with a"
         ]
-        test_video(video_path, snippet_text, "Spike")
+        test_video(video_path, snippet_text, "spike")
 
     def test_marcie1(self):
         video_path = TEST_DIR / "samples" / "marcie1.mp4"
@@ -163,14 +164,14 @@ class TranscriptionTestMethods(unittest.TestCase):
             "happy to see you",
             "minute dinner"
         ]
-        test_video(video_path, snippet_text, "Marcie")
+        test_video(video_path, snippet_text, "marcie")
 
     def test_wilbur1(self):
         video_path = TEST_DIR / "samples" / "wilbur1.mp4"
         snippet_text = [
             "Bellbottom rock"
         ]
-        test_video(video_path, snippet_text, "Wilbur")
+        test_video(video_path, snippet_text, "wilbur")
 
     def test_sprocket1(self):
         video_path = TEST_DIR / "samples" / "sprocket1.mp4"
@@ -178,7 +179,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "You been training",
             "up a big sweat",
         ]
-        test_video(video_path, snippet_text, "Sprocket")
+        test_video(video_path, snippet_text, "sprocket")
 
     def test_flick1(self):
         video_path = TEST_DIR / "samples" / "flick1.mp4"
@@ -186,7 +187,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "Do you live here",
             "bug buff",
         ]
-        test_video(video_path, snippet_text, "Flick")
+        test_video(video_path, snippet_text, "flick")
 
     def test_monique1(self):
         video_path = TEST_DIR / "samples" / "monique1.mp4"
@@ -195,7 +196,7 @@ class TranscriptionTestMethods(unittest.TestCase):
             "you live on this",
             "done unpacking"
         ]
-        test_video(video_path, snippet_text, "Monique")
+        test_video(video_path, snippet_text, "monique")
 
 if __name__ == '__main__':
     unittest.main()
