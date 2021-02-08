@@ -10,7 +10,7 @@ from torch.utils import data
 from PIL import Image
 import os
 from contextlib import contextmanager
-from typing import Iterator, List, Tuple
+from typing import Iterator, Iterable, List, Tuple
 from math import ceil
 from pathlib import Path
 
@@ -33,21 +33,29 @@ def temporaryframes(video_src, seconds) -> Iterator[Tuple[torch.utils.data.DataL
         os.mkdir(f"{d}/1")
         os.putenv('OUTPUT_DIR', f"{d}/1")
         os.putenv('VIDEO_SRC', video_src)
+
+        # Number of frames to extract from the video at a time
+        # can crash the instance if this number is too high
         n = 200
         for secs in [seconds[n * i:n * (i+1)] for i in range(ceil(len(seconds) / n))]:
             os.putenv('FRAMES', ' '.join(str(s) for s in secs))
             subprocess.run(["./get-frames.sh"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        
+        # Knows the implementation of the `get-frames.sh`
         frame_paths = [f"{d}/1/tmp_{s}.bmp" for s in seconds]
+
         dataset = datasets.ImageFolder(root=d, transform=transform)
         yield (torch.utils.data.DataLoader(dataset,batch_size=50, shuffle=False), frame_paths)
 
 
-def create_dataset(video_src, output_dir, seconds) -> None:
+def create_dataset(video_src: str, output_dir: str, seconds: Iterable[int]) -> None:
     if not Path(output_dir).is_dir():
         os.mkdir(f"{output_dir}")
         os.mkdir(f"{output_dir}/dialogue")
         os.mkdir(f"{output_dir}/not-dialogue")
         
+    video_id = video_src.split(".")[0].split("-")[1]
+
     with temporaryframes(video_src, seconds) as temp_frames:
         data_loader, frame_paths = temp_frames
         output = []
@@ -56,6 +64,6 @@ def create_dataset(video_src, output_dir, seconds) -> None:
         res = torch.cat(output).min(1).indices
         for i, (frame_path, is_dialogue) in enumerate(zip(frame_paths, res)):
             if is_dialogue:
-                os.rename(frame_path, f"{output_dir}/dialogue/{seconds[i]}.bmp")
+                os.rename(frame_path, f"{output_dir}/dialogue/{video_id}-{seconds[i]}.bmp")
             else:
-                os.rename(frame_path, f"{output_dir}/not-dialogue/{seconds[i]}.bmp")
+                os.rename(frame_path, f"{output_dir}/not-dialogue/{video_id}-{seconds[i]}.bmp")
