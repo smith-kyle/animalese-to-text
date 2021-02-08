@@ -50,7 +50,6 @@ def split_video_and_audio(video_path: Path, audio_path: Path, output_dir: Path, 
         split_file(audio_path, audio_output_path, start_ms, chunk_len_ms)
 
 
-
 def get_video_length(filename):
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",

@@ -8,3 +8,4 @@ data_collection/k8s_templates/transcribe-job.yaml
 data_collection/k8s_templates/prepare-videos.yaml
 data/**
 !data/**.zip
+*.egg-info
