@@ -54,7 +54,7 @@ def create_dataset(video_src: str, output_dir: str, seconds: Iterable[int]) -> N
         os.mkdir(f"{output_dir}/dialogue")
         os.mkdir(f"{output_dir}/not-dialogue")
         
-    video_id = video_src.split(".")[0].split("-")[1]
+    video_id = video_src.split(".")[0].split("video-")[1]
 
     with temporaryframes(video_src, seconds) as temp_frames:
         data_loader, frame_paths = temp_frames
