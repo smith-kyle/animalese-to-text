@@ -1,4 +1,4 @@
-Pillow==7.1.2
+Pillow==8.3.2
 pytesseract==0.3.4
 matplotlib==3.2.1
 youtube-dl==2020.5.3
